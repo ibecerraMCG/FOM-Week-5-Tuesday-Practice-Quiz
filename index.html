@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5 Tuesday Practice Quiz</title>
+    <style>
+        /* --- Color Variables --- */
+        :root {
+            /* Default: Dark Theme */
+            --bg-color: #2d343e; /* Dark background */
+            --container-bg: #3c424f; /* Slightly lighter container */
+            --text-color: #e8e6e3; /* Light text */
+            --question-text-color: #8ab4f8; /* Light blue for questions */
+            --lo-text-color: #b0c4de; /* Lighter blue for learning objective */
+            --border-color: #555; /* Darker borders */
+            --separator-color: #4a4f5a;
+            --label-bg: #454c5a;
+            --label-border: #6c757d;
+            --label-hover-bg: #525966;
+            --label-hover-border: #7a828a;
+            --button-bg: #8ab4f8;
+            --button-text: #202124;
+            --button-hover-bg: #a3c5f9;
+            --button-disabled-bg: #5f6368;
+            --feedback-correct-bg: #344e41;
+            --feedback-correct-text: #c7f9cc;
+            --feedback-correct-border: #52b788;
+            --feedback-incorrect-bg: #5e2129;
+            --feedback-incorrect-text: #f8d7da;
+            --feedback-incorrect-border: #a4133c;
+            --feedback-rationale-text: #adb5bd; /* Lighter gray for rationale */
+            --feedback-source-text: #c7d3e0;
+            --feedback-separator: #6c757d;
+            --radio-accent: #8ab4f8;
+        }
+
+        .light-theme {
+            --bg-color: #eef2f7;
+            --container-bg: #ffffff;
+            --text-color: #343a40;
+            --question-text-color: #0056b3;
+            --lo-text-color: #5a6e8a;
+            --border-color: #dee2e6;
+            --separator-color: #e9ecef;
+            --label-bg: #f8f9fa;
+            --label-border: #ced4da;
+            --label-hover-bg: #e2e6ea;
+            --label-hover-border: #adb5bd;
+            --button-bg: #007bff;
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --button-disabled-bg: #6c757d;
+            --feedback-correct-bg: #d1e7dd;
+            --feedback-correct-text: #0f5132;
+            --feedback-correct-border: #badbcc;
+            --feedback-incorrect-bg: #f8d7da;
+            --feedback-incorrect-text: #842029;
+            --feedback-incorrect-border: #f5c2c7;
+            --feedback-rationale-text: #495057;
+            --feedback-source-text: #343a40;
+            --feedback-separator: #ccc;
+            --radio-accent: #007bff;
+        }
+
+        /* --- General Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.7;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #theme-toggle-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--label-border);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+             transition: background-color 0.3s, color 0.3s;
+        }
+         #theme-toggle-button:hover {
+             opacity: 0.8;
+         }
+
+
+        #quiz-container {
+            max-width: 900px;
+            margin: 80px auto 30px auto;
+            background: var(--container-bg);
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--separator-color);
+            transition: border-color 0.3s;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 5px;
+        }
+        
+        .learning-objective {
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--lo-text-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--separator-color);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            color: var(--question-text-color);
+            transition: color 0.3s;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--label-border);
+            background-color: var(--label-bg);
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: var(--label-hover-bg);
+            border-color: var(--label-hover-border);
+        }
+
+        .options input[type="radio"]:checked+span {
+             font-weight: bold;
+             color: var(--question-text-color);
+        }
+        .options input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--radio-accent);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .check-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .check-button:hover {
+            opacity: 0.85;
+        }
+
+         .check-button:disabled {
+             background-color: var(--button-disabled-bg);
+             cursor: not-allowed;
+             opacity: 0.7;
+         }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: none;
+            border: 1px solid transparent;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-correct-bg);
+            color: var(--feedback-correct-text);
+            border-color: var(--feedback-correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-incorrect-bg);
+            color: var(--feedback-incorrect-text);
+            border-color: var(--feedback-incorrect-border);
+            display: block;
+        }
+
+        .feedback-status {
+             font-weight: bold;
+             font-size: 1.1em;
+             display: block;
+             margin-bottom: 8px;
+        }
+
+        .feedback-rationale {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--feedback-separator);
+            font-size: 0.9em;
+            color: var(--feedback-rationale-text);
+            transition: color 0.3s, border-color 0.3s;
+        }
+        
+        .feedback-source {
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--feedback-source-text);
+            background-color: rgba(0,0,0,0.1);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--question-text-color);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle-button">Toggle Theme</button>
+    <h1>Week 5 Tuesday Practice Quiz</h1>
+
+    <div id="quiz-container">
+        <!-- Questions will be loaded here by JavaScript -->
+    </div>
+
+    <script>
+        const quizData = [
+            // Carcinogenesis Questions
+            {
+                learningObjective: "LO1 (Carcinogenesis): Explain the molecular basis of carcinoma with regard to oncogenes, tumor suppressor genes, genes regulating apoptosis, and genes involved in DNA repair.",
+                question: "A patient with metastatic melanoma is found to have a BRAF V600E mutation. This mutation results in a constitutively active protein kinase that promotes cell division even in the absence of normal growth signals. The mutated BRAF gene is best classified as which of the following?",
+                options: { A: "A proto-oncogene", B: "An oncogene", C: "A tumor suppressor gene", D: "A DNA repair gene" },
+                correctAnswer: "B",
+                rationale: "A proto-oncogene is a normal gene involved in cell growth. When mutated in a way that leads to a gain of function (e.g., constant activity), it becomes an oncogene, which drives uncontrolled proliferation. The BRAF V600E mutation is a classic example of an activating mutation that converts a proto-oncogene into an oncogene.",
+                source: "'So, if gene A is a gene that tells a cell it is time to divide, the mutated form of gene A would tell the cell to divide all the time. Therefore, gene A is a proto-oncogene. Mutated gene A is an oncogene.' (Carcinogenesis and Epidemiology, Slide 7)"
+            },
+            {
+                learningObjective: "LO1 (Carcinogenesis): Explain the molecular basis of carcinoma with regard to oncogenes, tumor suppressor genes, genes regulating apoptosis, and genes involved in DNA repair.",
+                question: "A family is identified with Li-Fraumeni syndrome, a hereditary condition that confers a very high risk for multiple types of cancer. This syndrome is caused by an inherited germline mutation in one copy of the TP53 gene. For a tumor to develop in an individual with this syndrome, what additional genetic event must typically occur in a somatic cell?",
+                options: { A: "A second, 'somatic' mutation that inactivates the remaining normal copy of TP53", B: "A mutation that activates a nearby oncogene", C: "A translocation of the mutated TP53 gene", D: "Duplication of the inherited mutated TP53 allele" },
+                correctAnswer: "A",
+                rationale: "TP53 is a tumor suppressor gene. According to the 'two-hit model,' individuals with an inherited cancer syndrome have already inherited one mutated, non-functional copy ('first hit') in all their cells. Cancer develops when a second mutation ('second hit') occurs in a somatic cell, inactivating the one remaining functional copy of the gene, leading to a complete loss of its tumor-suppressing function.",
+                source: "'2 hit model... Have to knock out (mutate) BOTH copies of a tumor suppressor gene to cause cancer. Inherited syndromes that predispose to cancer are usually caused by inheriting one bad copy of a tumor suppressor gene.' (Carcinogenesis and Epidemiology, Slide 10)"
+            },
+            {
+                learningObjective: "LO1 (Carcinogenesis): Explain the molecular basis of carcinoma with regard to oncogenes, tumor suppressor genes, genes regulating apoptosis, and genes involved in DNA repair.",
+                question: "A patient is diagnosed with follicular lymphoma. Cytogenetic analysis reveals a t(14;18) translocation, which places the BCL2 gene next to the highly active immunoglobulin heavy chain (IGH) gene promoter. This genetic alteration contributes to carcinogenesis by what mechanism?",
+                options: { A: "Inactivating a pro-apoptotic gene", B: "Activating a DNA repair gene", C: "Causing constitutive overexpression of an anti-apoptotic gene", D: "Creating a fusion protein with kinase activity" },
+                correctAnswer: "C",
+                rationale: "BCL2 is an anti-apoptotic gene. The t(14;18) translocation does not mutate the BCL2 protein itself but places it under the control of a powerful promoter (IGH) that is always active in B-cells. This leads to massive overexpression of the BCL2 protein, which prevents apoptosis and makes the lymphoma cells 'invincible,' allowing them to accumulate other mutations.",
+                source: "'Anti-apoptotic gene (Example – BCL2) – normally prevents apoptosis. If you translocate this gene adjacent to a gene that is always active, the cell will be in a constant state of anti-apoptosis (i.e. never die/invincible).' (Carcinogenesis and Epidemiology, Slide 13)"
+            },
+            {
+                learningObjective: "LO2 (Carcinogenesis): Describe the role of chemicals, radiation, and infections in carcinogenesis.",
+                question: "A patient who worked for many years in construction without proper respiratory protection is diagnosed with mesothelioma. Exposure to which of the following chemical carcinogens is the most well-established cause of this specific type of cancer?",
+                options: { A: "Vinyl chloride", B: "Arsenic", C: "Polycyclic hydrocarbons", D: "Asbestos" },
+                correctAnswer: "D",
+                rationale: "Asbestos is a well-known occupational carcinogen. Inhalation of asbestos fibers is strongly linked to the development of mesothelioma, a rare and aggressive cancer of the lining of the lungs and abdomen.",
+                source: "'Occupational exposure carcinogens. Asbestos -> Mesothelioma.' (Carcinogenesis and Epidemiology, Slide 29)"
+            },
+            {
+                learningObjective: "LO2 (Carcinogenesis): Describe the role of chemicals, radiation, and infections in carcinogenesis.",
+                question: "A 45-year-old woman is diagnosed with cervical cancer. Molecular testing of the tumor is positive for human papillomavirus (HPV) type 16. The oncogenic potential of high-risk HPV types is primarily mediated by the viral proteins E6 and E7, which act by inhibiting which two key cellular proteins?",
+                options: { A: "BCL2 and BAX", B: "MYC and ABL", C: "P53 and RB", D: "BRCA1 and BRCA2" },
+                correctAnswer: "C",
+                rationale: "The HPV E6 protein targets the tumor suppressor p53 for degradation, while the HPV E7 protein binds to and inactivates the tumor suppressor retinoblastoma protein (RB). The combined inhibition of these two critical cell cycle regulators leads to uncontrolled cell proliferation and genomic instability.",
+                source: "'HPV proteins work to inhibit tumor suppressor genes of squamous epithelium (P53, RB).' The diagram on the same slide shows HPV E6 inhibiting p53 and HPV E7 inhibiting RB-E2F interaction. (Carcinogenesis and Epidemiology, Slide 25)"
+            },
+            {
+                learningObjective: "LO2 (Carcinogenesis): Describe the role of chemicals, radiation, and infections in carcinogenesis.",
+                question: "Exposure to ultraviolet B (UVB) radiation from sunlight is a major cause of skin cancer. What is the primary mechanism by which UVB directly damages DNA?",
+                options: { A: "It causes double-strand breaks in the DNA backbone.", B: "It generates free radicals that oxidize DNA bases.", C: "It causes the formation of covalent bonds between adjacent pyrimidine bases (thymine dimers).", D: "It integrates viral oncogenes into the host genome." },
+                correctAnswer: "C",
+                rationale: "UVB radiation is directly absorbed by DNA, causing the formation of pyrimidine dimers, most commonly between adjacent thymine bases. These dimers create a physical kink in the DNA helix that blocks replication and transcription. If not repaired by the nucleotide excision repair (NER) pathway, these lesions can lead to mutations and skin cancer.",
+                source: "'UVB - major cause. Directly causes skin cancer. Direct DNA damage in skin. Dimerize adjacent Thymine (pyrimidines).' (Carcinogenesis and Epidemiology, Slide 18)"
+            },
+            {
+                learningObjective: "LO3 (Carcinogenesis): Describe and compare the epidemiology of common cancers.",
+                question: "According to 2022 epidemiological data for the United States, which cancer is the most commonly diagnosed (highest incidence) in men, and which is the most commonly diagnosed in women?",
+                options: { A: "Men: Lung, Women: Lung", B: "Men: Prostate, Women: Breast", C: "Men: Colorectum, Women: Lung", D: "Men: Lung, Women: Breast" },
+                correctAnswer: "B",
+                rationale: "Based on incidence data, prostate cancer is the most frequently diagnosed cancer in men, while breast cancer is the most frequently diagnosed cancer in women.",
+                source: "'Men. Most common: Prostate.' and 'Women. Most common: Breast.' (Carcinogenesis and Epidemiology, Slide 39)"
+            },
+            {
+                learningObjective: "LO3 (Carcinogenesis): Describe and compare the epidemiology of common cancers.",
+                question: "While incidence reflects the number of new cases, mortality reflects the deadliest cancers. Based on 2022 data for the United States, which cancer is the leading cause of cancer-related death in both men and women?",
+                options: { A: "Pancreatic cancer", B: "Colorectal cancer", C: "Breast cancer", D: "Lung cancer" },
+                correctAnswer: "D",
+                rationale: "Despite not being the most common in terms of incidence for either sex, lung cancer is by far the deadliest cancer, causing the most cancer-related deaths in both men and women.",
+                source: "'Men. Most deadly: Lung.' and 'Women. Most deadly: Lung.' (Carcinogenesis and Epidemiology, Slide 41)"
+            },
+            {
+                learningObjective: "LO3 (Carcinogenesis): Describe and compare the epidemiology of common cancers.",
+                question: "A pediatrician is discussing cancer risk with the parents of a young child. Which of the following is the most common malignancy diagnosed in the pediatric population (age 0-19)?",
+                options: { A: "Brain tumors", B: "Hodgkin lymphoma", C: "Leukemia", D: "Neuroblastoma" },
+                correctAnswer: "C",
+                rationale: "Leukemia, particularly B-cell acute lymphoblastic leukemia (B-ALL), is the most common cancer in children. It accounts for the highest number of new cancer diagnoses in the 0-19 age group.",
+                source: "'B cell acute lymphoblastic leukemia (B-ALL) ~92% cure rate. Most common cancer.' (Carcinogenesis and Epidemiology, Slide 42) and the bar chart on slide 43 shows 'Leukaemia' with the highest incidence in the 0-19 age group."
+            },
+            // Nucleotide Metabolism Questions
+            {
+                learningObjective: "LO1 (Nucleotide Metabolism): Explain the significance of de novo and salvage pathways... and genetic diseases associated with purine metabolism (HGPRT and ADA deficiencies).",
+                question: "A 3-year-old boy presents with intellectual disability, spasticity, and a history of biting his own lips and fingertips. Laboratory studies show marked hyperuricemia. These clinical features are characteristic of Lesch-Nyhan syndrome, which is caused by a deficiency in which of the following enzymes?",
+                options: { A: "Adenosine deaminase (ADA)", B: "PRPP synthetase", C: "Xanthine oxidase", D: "Hypoxanthine-guanine phosphoribosyltransferase (HGPRT)" },
+                correctAnswer: "D",
+                rationale: "Lesch-Nyhan syndrome is a severe X-linked disorder caused by a defect in the purine salvage pathway enzyme HGPRT. The inability to salvage hypoxanthine and guanine leads to their degradation to uric acid (hyperuricemia) and an increase in PRPP levels, which drives excessive de novo purine synthesis. The neurologic and behavioral symptoms are hallmarks of the disease.",
+                source: "'An absence of the enzyme activity of HGPRT (<2% of normal) due to a genetic defect causes a severe condition called Lesch-Nyhan syndrome... associated with hyperuricemia, gout... severe neurological and behavioral abnormalities, and self-mutilating behavior.' (Nucleotide Metabolism, Slide 10)"
+            },
+            {
+                learningObjective: "LO1 (Nucleotide Metabolism): Explain the significance of de novo and salvage pathways... and genetic diseases associated with purine metabolism (HGPRT and ADA deficiencies).",
+                question: "An infant is diagnosed with Severe Combined Immunodeficiency (SCID). The underlying cause is a deficiency in adenosine deaminase (ADA). The immunodeficiency in this disorder results from the accumulation of which toxic metabolite that inhibits ribonucleotide reductase?",
+                options: { A: "Uric acid", B: "Deoxyadenosine triphosphate (dATP)", C: "Inosine monophosphate (IMP)", D: "Guanosine monophosphate (GMP)" },
+                correctAnswer: "B",
+                rationale: "ADA deficiency leads to an accumulation of adenosine and deoxyadenosine. Deoxyadenosine is phosphorylated to dATP. High levels of dATP are toxic, particularly to lymphocytes, because dATP is a potent allosteric inhibitor of ribonucleotide reductase, the enzyme necessary for synthesizing all deoxyribonucleotides for DNA replication. This halts lymphocyte proliferation, causing immunodeficiency.",
+                source: "'Genetic Defects in ADA or PNP Cause Autosomal Recessive SCID.' The diagram shows dATP accumulation, which 'Inhibits ribonucleotide reductase', leading to a fall in dNTP levels. (Nucleotide Metabolism, Slide 15)"
+            },
+            {
+                learningObjective: "LO1 (Nucleotide Metabolism): Explain the significance of de novo and salvage pathways... and genetic diseases associated with purine metabolism (HGPRT and ADA deficiencies).",
+                question: "A patient with tumor lysis syndrome develops hyperuricemia. To prevent uric acid nephropathy, the patient is started on allopurinol. This drug lowers uric acid levels by inhibiting which of the following enzymes?",
+                options: { A: "HGPRT", B: "PRPP amidotransferase", C: "Xanthine oxidase", D: "Adenosine deaminase" },
+                correctAnswer: "C",
+                rationale: "Xanthine oxidase is the enzyme that catalyzes the final two steps of purine degradation: the conversion of hypoxanthine to xanthine, and xanthine to uric acid. Allopurinol is a structural analog of hypoxanthine that acts as an inhibitor of xanthine oxidase, thereby blocking the production of uric acid.",
+                source: "'The drug allopurinol inhibits xanthine oxidase and inhibits the conversion of hypoxanthine and xanthine to uric acid.' (Nucleotide Metabolism, Slide 9)"
+            },
+            {
+                learningObjective: "LO2 (Nucleotide Metabolism): Describe the salient features of pyrimidine nucleotide synthesis and explain the connection between pyrimidine synthesis and urea cycle disorders in the etiology of orotic aciduria.",
+                question: "An infant presents with failure to thrive and severe megaloblastic anemia that is unresponsive to vitamin B12 and folate. Urinalysis reveals large amounts of orotic acid. Blood ammonia levels are normal. This presentation is most consistent with a defect in which of the following enzymes?",
+                options: { A: "Ornithine transcarbamylase", B: "UMP synthase", C: "Carbamoyl phosphate synthetase I", D: "HGPRT" },
+                correctAnswer: "B",
+                rationale: "This is a classic presentation of hereditary orotic aciduria, a defect in de novo pyrimidine synthesis. A deficiency in UMP synthase (which has two enzymatic activities, orotate phosphoribosyl transferase and OMP decarboxylase) leads to the accumulation of orotic acid and a failure to produce pyrimidine nucleotides, causing megaloblastic anemia. Normal ammonia levels distinguish it from a urea cycle defect.",
+                source: "'Hereditary orotic aciduria. Megaloblastic anemia.' and 'A genetic defect in UMP synthase... will also result in orotic acid accumulation... this condition is also characterized by severe megaloblastic anemia.' (Nucleotide Metabolism, Slide 17)"
+            },
+            {
+                learningObjective: "LO2 (Nucleotide Metabolism): Describe the salient features of pyrimidine nucleotide synthesis and explain the connection between pyrimidine synthesis and urea cycle disorders in the etiology of orotic aciduria.",
+                question: "A newborn develops lethargy, vomiting, and hyperammonemia. Laboratory tests reveal elevated urinary orotic acid. These findings are suggestive of a deficiency in ornithine transcarbamylase (OTC), a urea cycle enzyme. What is the biochemical basis for the orotic aciduria in this condition?",
+                options: { A: "A primary defect in pyrimidine synthesis leads to a secondary increase in ammonia.", B: "Carbamoyl phosphate from the mitochondria spills into the cytosol and enters the pyrimidine synthesis pathway.", C: "High ammonia levels allosterically activate UMP synthase, increasing orotic acid production.", D: "The defect prevents the salvage of pyrimidines, shunting them to a degradation pathway that produces orotic acid." },
+                correctAnswer: "B",
+                rationale: "In an OTC deficiency, carbamoyl phosphate produced by CPS I in the mitochondria cannot be combined with ornithine to enter the urea cycle. The excess mitochondrial carbamoyl phosphate leaks into the cytosol, where it becomes a substrate for the de novo pyrimidine synthesis pathway, leading to the overproduction of orotic acid.",
+                source: "'Urea cycles disorders in which there is increased production of carbamoyl phosphate... carbamoylphosphate produced by CPS I will ‘spill over’ into pyrimidine synthesis pathway, resulting in increased orotic acid in the plasma as well as urine.' (Nucleotide Metabolism, Slide 18)"
+            },
+            {
+                learningObjective: "LO2 (Nucleotide Metabolism): Describe the salient features of pyrimidine nucleotide synthesis and explain the connection between pyrimidine synthesis and urea cycle disorders in the etiology of orotic aciduria.",
+                question: "A patient with hereditary orotic aciduria is treated with dietary uridine. How does this therapy alleviate the symptoms of the disorder?",
+                options: { A: "Uridine directly inhibits the production of orotic acid.", B: "Uridine provides a source for pyrimidine nucleotide synthesis, bypassing the enzymatic block.", C: "Uridine is converted to a purine, which feedback-inhibits orotic acid production.", D: "Uridine enhances the residual activity of the deficient UMP synthase." },
+                correctAnswer: "B",
+                rationale: "In hereditary orotic aciduria, the block is at UMP synthase. Administering uridine allows cells to bypass this block. Uridine can be phosphorylated to UMP, which can then be converted to other necessary pyrimidine nucleotides (UTP, CTP). The resulting UTP also provides feedback inhibition on CPS II, which reduces the de novo production of orotic acid.",
+                source: "'Patients are treated with dietary uridine. Exogenous uridine is converted to UMP... exogenous uridine bypasses the defective UMP synthase and supplies cells with pyrimidine nucleotides.' (Nucleotide Metabolism, Slide 17)"
+            },
+            {
+                learningObjective: "LO3 (Nucleotide Metabolism): Describe the ribonucleotide reductase reaction and the synthesis of thymidine nucleotides.",
+                question: "The conversion of ribonucleoside diphosphates (NDPs) to deoxyribonucleoside diphosphates (dNDPs) is a critical step for DNA synthesis. This reaction is catalyzed by ribonucleotide reductase. The overall activity of this enzyme is allosterically inhibited by high levels of which molecule?",
+                options: { A: "ATP", B: "dATP", C: "GTP", D: "UDP" },
+                correctAnswer: "B",
+                rationale: "Ribonucleotide reductase has an activity site that controls its overall function. ATP binding to this site activates the enzyme, signaling that energy is available for DNA synthesis. Conversely, dATP binding to this site inactivates the enzyme, providing a negative feedback signal that the pool of deoxyribonucleotides is sufficient.",
+                source: "'Either ATP or dATP can bind to the activity site. Binding of ATP will activate the enzyme and binding of dATP will inactivate the enzyme.' (Nucleotide Metabolism, Slide 20)"
+            },
+            {
+                learningObjective: "LO3 (Nucleotide Metabolism): Describe the ribonucleotide reductase reaction and the synthesis of thymidine nucleotides.",
+                question: "The synthesis of deoxythymidine monophosphate (dTMP) from deoxyuridine monophosphate (dUMP) is catalyzed by thymidylate synthase. This unique reaction requires a one-carbon donation from which of the following folate coenzymes?",
+                options: { A: "N5-methyl-THF", B: "N10-formyl-THF", C: "N5,N10-methylene-THF", D: "Tetrahydrofolate (THF)" },
+                correctAnswer: "C",
+                rationale: "Thymidylate synthase transfers a methyl group to dUMP to form dTMP. This one-carbon group is provided by N5,N10-methylene-THF, which is simultaneously oxidized to dihydrofolate (DHF) in the process. This makes the reaction a target for antifolate drugs.",
+                source: "The diagram on slide 20 shows 'N5,N10-methylene-THF' as the cofactor for the 'Thymidylate synthase' reaction that converts dUMP to dTMP. (Nucleotide Metabolism, Slide 20)"
+            },
+            {
+                learningObjective: "LO3 (Nucleotide Metabolism): Describe the ribonucleotide reductase reaction and the synthesis of thymidine nucleotides.",
+                question: "The anticancer drug hydroxyurea is effective in treating certain malignancies by halting cell proliferation. What is the primary molecular target of hydroxyurea?",
+                options: { A: "Thymidylate synthase", B: "Dihydrofolate reductase", C: "Ribonucleotide reductase", D: "DNA polymerase" },
+                correctAnswer: "C",
+                rationale: "Hydroxyurea specifically inhibits ribonucleotide reductase, the enzyme responsible for creating the deoxyribonucleotide building blocks required for DNA synthesis. By blocking this enzyme, hydroxyurea depletes the cell of dNTPs, leading to S-phase arrest and apoptosis.",
+                source: "'Hydroxyurea used as an anticancer drug inhibits the enzyme [ribonucleotide reductase].' (Nucleotide Metabolism, Slide 20)"
+            },
+            {
+                learningObjective: "LO4 (Nucleotide Metabolism): Apply principles of nucleotide metabolism to the mechanisms of action of 6-mercaptopurine, 5-fluorouracil, and methotrexate.",
+                question: "A patient with acute lymphoblastic leukemia is being treated with methotrexate. This drug is a structural analog of folate and exerts its chemotherapeutic effect by directly and competitively inhibiting which of the following enzymes?",
+                options: { A: "Thymidylate synthase", B: "Dihydrofolate reductase (DHFR)", C: "HGPRT", D: "Ribonucleotide reductase" },
+                correctAnswer: "B",
+                rationale: "Methotrexate is a folate analog that competitively inhibits dihydrofolate reductase (DHFR). This enzyme is essential for regenerating tetrahydrofolate (THF) from dihydrofolate (DHF). By blocking DHFR, methotrexate depletes the cell of THF cofactors needed for both purine and thymidylate synthesis, thus halting DNA replication.",
+                source: "'Methotrexate is an antifolate drug... and competitively inhibits dihydrofolate reductase.' (Nucleotide Metabolism, Slide 23)"
+            },
+            {
+                learningObjective: "LO4 (Nucleotide Metabolism): Apply principles of nucleotide metabolism to the mechanisms of action of 6-mercaptopurine, 5-fluorouracil, and methotrexate.",
+                question: "A patient with colorectal cancer is treated with 5-fluorouracil (5-FU). After being converted to 5-fluoro-deoxyuridine monophosphate (5-FdUMP) in the cell, this active metabolite primarily inhibits which enzyme, leading to a 'thymineless death'?",
+                options: { A: "Ribonucleotide reductase", B: "Dihydrofolate reductase", C: "DNA polymerase", D: "Thymidylate synthase" },
+                correctAnswer: "D",
+                rationale: "5-FU is a prodrug that is converted to 5-FdUMP. 5-FdUMP acts as a suicide substrate for thymidylate synthase, forming a stable covalent complex with the enzyme and its folate cofactor. This irreversibly inhibits the enzyme, blocking the synthesis of dTMP from dUMP and depleting the cell of thymine needed for DNA synthesis.",
+                source: "'5-Fluorouracil... [the] latter inhibits thymidylate synthase and prevents the conversion of dUMP to TMP' (Nucleotide Metabolism, Slide 23). The diagram on slide 22 also shows 5-Fluoro dUMP as a suicide substrate for thymidylate synthase."
+            },
+            {
+                learningObjective: "LO4 (Nucleotide Metabolism): Apply principles of nucleotide metabolism to the mechanisms of action of 6-mercaptopurine, 5-fluorouracil, and methotrexate.",
+                question: "A child with leukemia is being treated with 6-mercaptopurine (6-MP). The efficacy of 6-MP is significantly increased when it is co-administered with allopurinol. What is the mechanism for this drug interaction?",
+                options: { A: "Allopurinol increases the absorption of 6-MP from the gut.", B: "Allopurinol inhibits xanthine oxidase, preventing the inactivation of 6-MP.", C: "Allopurinol induces the HGPRT enzyme, leading to faster activation of 6-MP.", D: "Allopurinol and 6-MP synergistically inhibit DNA polymerase." },
+                correctAnswer: "B",
+                rationale: "6-MP is a prodrug activated by HGPRT, but it is also inactivated by the enzyme xanthine oxidase, which converts it to inactive thiouric acid. Allopurinol is an inhibitor of xanthine oxidase. By blocking this inactivation pathway, allopurinol increases the plasma concentration and half-life of 6-MP, potentiating its effect. This requires a dose reduction of 6-MP to avoid toxicity.",
+                source: "'Allopurinol potentiates the effect.' and 'combination therapy with allopurinol enhances the therapeutic efficacy of 6-mercaptopurine because allopurinol inhibits the degradation of 6-mercaptopurine by xanthine oxidase (XO).' (Nucleotide Metabolism, Slide 22)"
+            },
+            // Cytogenetics of Cancer Questions
+            {
+                learningObjective: "LO1 (Cytogenetics): Identify MDR by understanding how Bcl2 can inhibit standard cancer therapies. Bcl2 translocation, one mechanism of Bcl2 overexpression.",
+                question: "A patient with follicular lymphoma is found to be resistant to a standard chemotherapy regimen that primarily acts by inducing the intrinsic pathway of apoptosis. This resistance is most likely due to a chromosomal translocation that causes the overexpression of which protein?",
+                options: { A: "p53", B: "Bax", C: "Bcl2", D: "Caspase-9" },
+                correctAnswer: "C",
+                rationale: "Bcl2 is a key anti-apoptotic protein that blocks the intrinsic pathway by inhibiting pro-apoptotic proteins like Bax. In follicular lymphoma, the t(14;18) translocation leads to high, constitutive expression of Bcl2. This prevents cancer cells from undergoing apoptosis in response to chemotherapeutic agents, resulting in multidrug resistance (MDR).",
+                source: "'Review (LO1) Bcl 2 blocks Bax and high level Bcl2 can cause resistance to different chemotherapeutic agents. This is referred to as multidrug resistance.' (Molecular Cytogenetics of Cancer, Slide 3)"
+            },
+            {
+                learningObjective: "LO1 (Cytogenetics): Identify MDR by understanding how Bcl2 can inhibit standard cancer therapies. Bcl2 translocation, one mechanism of Bcl2 overexpression.",
+                question: "The term multidrug resistance (MDR) describes the phenomenon where cancer cells become resistant to multiple chemotherapeutic drugs that differ in structure and function. Overexpression of Bcl2 is one mechanism of MDR because it directly inhibits which cellular process?",
+                options: { A: "DNA replication", B: "Cell cycle progression", C: "Apoptosis", D: "Angiogenesis" },
+                correctAnswer: "C",
+                rationale: "MDR is a critical problem in cancer treatment. The overexpression of Bcl2 results in resistance to apoptosis via the intrinsic pathway. Since many chemotherapy drugs exert their effect by inducing apoptosis, high levels of the anti-apoptotic Bcl2 protein make the cells resistant to these drugs.",
+                source: "'Results in resistance to apoptosis (via the intrinsic pathway). Results in resistance to multiple chemotherapeutic drugs that differ by structure and function (termed multidrug resistance, MDR).' (Molecular Cytogenetics of Cancer, Slide 4)"
+            },
+            {
+                learningObjective: "LO1 (Cytogenetics): Identify MDR by understanding how Bcl2 can inhibit standard cancer therapies. Bcl2 translocation, one mechanism of Bcl2 overexpression.",
+                question: "The t(14;18) translocation is a hallmark of follicular lymphoma. This translocation places the Bcl2 gene from chromosome 18 under the regulatory control of a powerful promoter on chromosome 14. What is this promoter?",
+                options: { A: "The MYC promoter", B: "The p53 promoter", C: "The immunoglobulin heavy chain (IgG) promoter", D: "The beta-globin promoter" },
+                correctAnswer: "C",
+                rationale: "In B-lymphocytes, the immunoglobulin heavy chain (IgG) gene is highly and constitutively expressed. The t(14;18) translocation juxtaposes the Bcl2 gene with this powerful IgG promoter, leading to its overexpression and the subsequent block of apoptosis.",
+                source: "'Bcl2 translocation in some lymphomas... under the regulation of the IgG promoter after translocation' (Molecular Cytogenetics of Cancer, Slide 7)"
+            },
+            {
+                learningObjective: "LO2 (Cytogenetics): Chromosomal Translocations in cancer cells: Bcl2 & BCR/ABL.",
+                question: "A patient presents with fatigue, splenomegaly, and a markedly elevated white blood cell count with a predominance of granulocytes in all stages of maturation. Cytogenetic analysis reveals the presence of a t(9;22) translocation. This finding is diagnostic for which of the following hematologic malignancies?",
+                options: { A: "Acute lymphoblastic leukemia (ALL)", B: "Follicular lymphoma", C: "Chronic myelogenous leukemia (CML)", D: "Multiple myeloma" },
+                correctAnswer: "C",
+                rationale: "The t(9;22)(q34;q11) translocation creates the Philadelphia chromosome and the BCR-ABL fusion gene. The resulting constitutively active BCR-ABL tyrosine kinase is the molecular driver of Chronic Myelogenous Leukemia (CML).",
+                source: "'2nd example of a translocation: Philadelphia chromosome, BCR-ABL fusion (tyrosine kinase) drives Chronic Myelogenous Leukemia' (Molecular Cytogenetics of Cancer, Slide 10)"
+            },
+            {
+                learningObjective: "LO2 (Cytogenetics): Chromosomal Translocations in cancer cells: Bcl2 & BCR/ABL.",
+                question: "A FISH analysis is performed on a patient's bone marrow cells using a locus-specific probe for the ABL gene on chromosome 9 (red) and a locus-specific probe for the BCR gene on chromosome 22 (green). In a normal interphase cell, what signal pattern would be expected?",
+                options: { A: "One red signal, one green signal", B: "Two red signals, two green signals", C: "One red/green fusion signal", D: "Two red/green fusion signals" },
+                correctAnswer: "B",
+                rationale: "A normal diploid cell has two copies of chromosome 9 and two copies of chromosome 22. Therefore, in an interphase nucleus, one would expect to see two separate red signals (for the two ABL loci) and two separate green signals (for the two BCR loci).",
+                source: "This is inferred from the diagrams of FISH analysis. The metaphase spread on slide 12 shows two normal #9 chromosomes and two normal #22 chromosomes in addition to the derivative chromosomes. The interphase FISH on slide 13 shows separate red and green signals. Thus, a normal cell would have two of each, separate."
+            },
+            {
+                learningObjective: "LO2 (Cytogenetics): Chromosomal Translocations in cancer cells: Bcl2 & BCR/ABL.",
+                question: "A chromosomal translocation is defined as the exchange of genetic material between two non-homologous chromosomes. This exchange results in the formation of two new hybrid chromosomes, each referred to as a:",
+                options: { A: "Isochromosome", B: "Ring chromosome", C: "Derivative chromosome", D: "Marker chromosome" },
+                correctAnswer: "C",
+                rationale: "When a translocation occurs, two new chromosomes are formed. Each of these is called a derivative (der) chromosome. The derivative chromosome is named for the chromosome that contributed the centromere.",
+                source: "'Translocations between two chromosomes result in two derivative (der) chromosomes, each derivative chromosome is named for the chromosome from which its centromere originated.' (Molecular Cytogenetics of Cancer, Slide 6)"
+            },
+            {
+                learningObjective: "LO3 (Cytogenetics): Explain the concept of genomic instability, gene amplification, and the role of the tumor suppressor p53 as 'the guardian of the genome'.",
+                question: "Many cancer cells exhibit genomic instability, characterized by a high frequency of mutations and chromosomal alterations. The loss of function of which tumor suppressor protein is a primary cause of this instability, due to its critical role in cell cycle checkpoints and DNA repair?",
+                options: { A: "RB", B: "APC", C: "p53", D: "BRCA1" },
+                correctAnswer: "C",
+                rationale: "p53 is known as 'the guardian of the genome' because it plays a central role in responding to cellular stress, particularly DNA damage. It can halt the cell cycle to allow for repair or, if the damage is too severe, induce apoptosis. Loss of p53 function removes these critical checkpoints, allowing cells with damaged DNA to continue to divide, leading to the accumulation of mutations and chromosomal instability.",
+                source: "'Genomic instability is a result of loss of p53 (Rb)function; loss of checkpoint control during cell cycle.' (Molecular Cytogenetics of Cancer, Slide 26)"
+            },
+            {
+                learningObjective: "LO3 (Cytogenetics): Explain the concept of genomic instability, gene amplification, and the role of the tumor suppressor p53 as 'the guardian of the genome'.",
+                question: "A pathologist observes extrachromosomal, small, paired bodies of DNA in the nucleus of a cancer cell via karyotype analysis. These structures lack centromeres and are known to carry amplified oncogenes. What are these structures called?",
+                options: { A: "Homogeneously staining regions (HSRs)", B: "Double minute chromosomes (dmins)", C: "Ring chromosomes", D: "Telomeres" },
+                correctAnswer: "B",
+                rationale: "Double minute chromosomes (dmins) are a form of extrachromosomal gene amplification. They are small, circular DNA fragments that lack centromeres and replicate autonomously. Because they lack centromeres, they are unequally segregated during cell division, contributing to tumor heterogeneity.",
+                source: "'Extrachromosomal amplification – the amplified gene does not reside in the gene but on a double minute chromosome (dmin) (microscopic) and does not have a centromere.' (Molecular Cytogenetics of Cancer, Slide 19)"
+            },
+            {
+                learningObjective: "LO3 (Cytogenetics): Explain the concept of genomic instability, gene amplification, and the role of the tumor suppressor p53 as 'the guardian of the genome'.",
+                question: "Gene amplification is a common mechanism for oncogene activation in cancer. Which of the following best defines gene amplification?",
+                options: { A: "A point mutation that makes a gene product hyperactive.", B: "A chromosomal translocation that creates a fusion protein.", C: "The presence of more than the normal diploid (2n) number of copies of a gene.", D: "The complete deletion of a tumor suppressor gene." },
+                correctAnswer: "C",
+                rationale: "Gene amplification is a numerical alteration where a specific gene or region of a chromosome is present in many copies, far exceeding the normal two copies found in a diploid cell. This leads to a massive overexpression of the protein product, which, if it's a proto-oncogene, can drive cancer progression.",
+                source: "'A chromosomal amplification occurs when one or more genes are present in a > than 2n copy number.' (Molecular Cytogenetics of Cancer, Slide 18)"
+            },
+            {
+                learningObjective: "LO4 (Cytogenetics): Describe the significance of amplification of cyclinD, MDM2, MYCN, and HER2/neu.",
+                question: "A 2-year-old child is diagnosed with neuroblastoma. FISH analysis of the tumor cells reveals amplification of the MYCN gene. What is the clinical significance of this finding?",
+                options: { A: "It indicates a favorable prognosis and a high likelihood of spontaneous regression.", B: "It is associated with the poorest prognosis and aggressive disease.", C: "It indicates that the tumor arose from the adrenal cortex.", D: "It is a diagnostic marker but has no impact on prognosis or treatment." },
+                correctAnswer: "B",
+                rationale: "In neuroblastoma, amplification of the MYCN oncogene is a powerful negative prognostic indicator. It is associated with advanced-stage disease, rapid progression, and treatment failure. Patients with MYCN-amplified tumors require more aggressive therapy.",
+                source: "'Notably, amplification of MYCN oncogene is seen in approximately 25% of patients and is associated with the poorest prognosis' (Molecular Cytogenetics of Cancer, Slide 39)"
+            },
+            {
+                learningObjective: "LO4 (Cytogenetics): Describe the significance of amplification of cyclinD, MDM2, MYCN, and HER2/neu.",
+                question: "A patient with breast cancer is found to have amplification of the HER2/neu (ERBB2) gene. This finding makes her eligible for treatment with a monoclonal antibody that specifically targets the HER2 protein. What is the name of this targeted therapy?",
+                options: { A: "Imatinib", B: "Rituximab", C: "Bevacizumab", D: "Trastuzumab (Herceptin)" },
+                correctAnswer: "D",
+                rationale: "HER2/neu amplification leads to overexpression of the HER2 receptor on the surface of breast cancer cells, driving proliferation. Trastuzumab (brand name Herceptin) is a monoclonal antibody specifically designed to bind to the extracellular domain of the HER2 receptor, blocking its function and flagging the cell for destruction.",
+                source: "'Targeted therapy once HER2/neu amplification is shown by FISH.' The diagram shows 'Herceptin' binding to the 'HER2 protein'. (Molecular Cytogenetics of Cancer, Slide 50)"
+            },
+            {
+                learningObjective: "LO4 (Cytogenetics): Describe the significance of amplification of cyclinD, MDM2, MYCN, and HER2/neu.",
+                question: "A well-differentiated liposarcoma is characterized by the amplification of the MDM2 gene. The MDM2 protein is an oncogene that promotes tumor growth by causing the degradation of which key tumor suppressor protein?",
+                options: { A: "RB", B: "p53", C: "BRCA1", D: "APC" },
+                correctAnswer: "B",
+                rationale: "MDM2 is a ubiquitin ligase that specifically targets the p53 tumor suppressor protein. By ubiquitinating p53, MDM2 marks it for destruction by the proteasome. Amplification of the MDM2 gene leads to excessive amounts of MDM2 protein, which effectively eliminates p53 function, giving the cell a survival advantage.",
+                source: "'MDM2 is a ubiquitin ligase that will facilitate p53 ubiquitination and destruction through the proteasome.' (Molecular Cytogenetics of Cancer, Slide 32)"
+            },
+            // Foundations of Cancer Screening & Diagnosis Questions
+            {
+                learningObjective: "LO1 (Screening & Diagnosis): Discuss the risk/reward for cancer screening and how to assess efficacy of a screening test.",
+                question: "A new screening test for a specific cancer is introduced. It detects the cancer on average 2 years earlier than it would have been found based on symptoms. However, randomized controlled trials show that the mortality rate from the cancer is identical between the screened and unscreened groups. This apparent improvement in survival time due to earlier diagnosis without any change in the date of death is an example of what type of bias?",
+                options: { A: "Selection bias", B: "Length time bias", C: "Lead time bias", D: "Overdiagnosis bias" },
+                correctAnswer: "C",
+                rationale: "Lead time bias is the apparent increase in survival duration that results from detecting a disease earlier with screening, even if the treatment does not change the natural history of the disease. The 'clock' of survival time starts earlier, but the time of death remains the same.",
+                source: "'Lead time bias: apparent improvement in survival when screening advances the time of diagnosis without any change in the actual time of death.' (Foundations in Medicine, Slide 15)"
+            },
+            {
+                learningObjective: "LO1 (Screening & Diagnosis): Discuss the risk/reward for cancer screening and how to assess efficacy of a screening test.",
+                question: "A screening program is more likely to detect slow-growing, indolent cancers than aggressive, rapidly growing cancers, because the slow-growing cancers have a longer preclinical phase during which they are detectable. This phenomenon, which can make a screening program appear more effective than it really is, is known as:",
+                options: { A: "Lead time bias", B: "Selection bias", C: "Recall bias", D: "Length time bias" },
+                correctAnswer: "D",
+                rationale: "Length time bias refers to the tendency of screening tests to disproportionately detect less aggressive, slow-growing cancers. These cancers have a longer duration (length) in the preclinical, asymptomatic phase, providing a wider window of opportunity for detection compared to rapidly progressive cancers.",
+                source: "'Length time bias : screening to detect a disproportionate number of cases of slowly progressing cancer compared with more aggressive cases.' (Foundations in Medicine, Slide 16)"
+            },
+            {
+                learningObjective: "LO1 (Screening & Diagnosis): Discuss the risk/reward for cancer screening and how to assess efficacy of a screening test.",
+                question: "A screening test is designed to be used in a large, asymptomatic population. For such a test to be effective, it is crucial that it correctly identifies individuals who actually have the disease, thereby minimizing the number of false negatives. This statistical characteristic is known as:",
+                options: { A: "High specificity", B: "High positive predictive value", C: "High sensitivity", D: "High negative predictive value" },
+                correctAnswer: "C",
+                rationale: "High sensitivity is the ability of a test to correctly identify people who have the disease. In a screening context, a high sensitivity is paramount because the primary goal is to not miss any true cases of the disease. A test with low sensitivity will have many false negatives, providing false reassurance to affected individuals.",
+                source: "'High sensitivity. ability of a test to correctly identify people who have disease i.e. the proportion of people with the disease at the time of screening who have a positive screening test.' (Foundations in Medicine, Slide 8)"
+            },
+            {
+                learningObjective: "LO2 (Screening & Diagnosis): Identify the common USPSTF cancer screening recommendations and the data behind them.",
+                question: "A 60-year-old man with a 40-pack-year smoking history who quit smoking 5 years ago presents for a wellness visit. According to ACS/NCCN guidelines, which of the following cancer screening tests is recommended for this patient?",
+                options: { A: "Annual chest X-ray", B: "Annual low-dose CT scan of the chest", C: "Sputum cytology every 3 years", D: "No lung cancer screening is indicated" },
+                correctAnswer: "B",
+                rationale: "This patient meets the criteria for high-risk individuals who benefit from lung cancer screening. The guidelines recommend annual screening with low-dose computed tomography (LDCT) for individuals aged 55-74 (or 50-80 by NCCN) who have at least a 30-pack-year (or 20 by NCCN) smoking history and are either current smokers or have quit within the last 15 years.",
+                source: "'Lung Cancer. 30+ pack year smokers. 55-74. Low Dose Lung CT. Annual.' (Foundations in Medicine, Slide 13)"
+            },
+            {
+                learningObjective: "LO2 (Screening & Diagnosis): Identify the common USPSTF cancer screening recommendations and the data behind them.",
+                question: "A 50-year-old woman of average risk asks about screening for colorectal cancer. According to the American Cancer Society (ACS) guidelines, at what age should she have begun screening?",
+                options: { A: "40", B: "45", C: "50", D: "55" },
+                correctAnswer: "B",
+                rationale: "The ACS updated its guidelines to recommend that average-risk adults begin screening for colorectal cancer at age 45. This change was made in response to rising incidence of the disease in younger adults.",
+                source: "'Colon Cancer. Men and Women. When: 45.' (Foundations in Medicine, Slide 13)"
+            },
+            {
+                learningObjective: "LO2 (Screening & Diagnosis): Identify the common USPSTF cancer screening recommendations and the data behind them.",
+                question: "A 45-year-old woman presents for her annual exam. She has no family history of breast cancer. According to the ACS and USPSTF recommendations, which screening schedule for breast cancer is appropriate for her?",
+                options: { A: "Begin annual mammograms now.", B: "Begin biennial mammograms at age 50.", C: "Clinical breast exam only until age 50.", D: "Breast self-exam only." },
+                correctAnswer: "A",
+                rationale: "The ACS guidelines recommend that women of average risk should have the choice to begin annual mammography between ages 40-44, and that all women should begin annual mammography by age 45. The USPSTF recommends biennial mammograms starting at age 40. Therefore, starting mammograms at age 45 is consistent with both sets of guidelines.",
+                source: "'Breast Cancer. Women. When: Majority age 40. Most age 45. What: Mammography. How Often: Annual.' (Foundations in Medicine, Slide 13)"
+            },
+            {
+                learningObjective: "LO3 (Screening & Diagnosis): Describe the clinical presentation for common cancers: breast, lung, colon, and prostate.",
+                question: "A 65-year-old woman presents with a rash on her right breast that she has had for two months. On examination, the skin is thickened, erythematous, and has a dimpled texture resembling an orange peel. What is the most likely diagnosis?",
+                options: { A: "Mastitis", B: "Ductal carcinoma in situ", C: "Paget disease of the nipple", D: "Inflammatory breast cancer" },
+                correctAnswer: "D",
+                rationale: "The clinical sign of 'peau d'orange' (skin of an orange) is a classic finding in inflammatory breast cancer. It is caused by tumor cells blocking lymphatic drainage in the skin of the breast, leading to lymphedema and the characteristic dimpled appearance.",
+                source: "The image labeled 'Peau d'orange' is shown next to the label 'Inflammatory Breast Cancer'. (Foundations in Medicine, Slide 31)"
+            },
+            {
+                learningObjective: "LO3 (Screening & Diagnosis): Describe the clinical presentation for common cancers: breast, lung, colon, and prostate.",
+                question: "A 68-year-old man reports to his physician that he has noticed bright red blood on the toilet paper after bowel movements for the past month. He has also experienced a change in his bowel habits, with narrower stools than usual. This presentation is most concerning for which of the following malignancies?",
+                options: { A: "Prostate cancer", B: "Bladder cancer", C: "Colon cancer", D: "Gastric cancer" },
+                correctAnswer: "C",
+                rationale: "Rectal bleeding (hematochezia) and a change in bowel habits are classic 'red flag' symptoms for colon cancer, particularly for tumors located in the distal colon or rectum.",
+                source: "The info-graphic for 'Clinical Presentation – Colon Cancer' lists 'Rectal bleeding' and 'Bowel habits changes' as key symptoms. (Foundations in Medicine, Slide 32)"
+            },
+            {
+                learningObjective: "LO3 (Screening & Diagnosis): Describe the clinical presentation for common cancers: breast, lung, colon, and prostate.",
+                question: "A 70-year-old man presents with difficulty initiating urination, a weak urinary stream, and nocturia. While these symptoms are most commonly caused by benign prostatic hyperplasia (BPH), they can also be a clinical presentation of which cancer?",
+                options: { A: "Bladder cancer", B: "Testicular cancer", C: "Renal cell carcinoma", D: "Prostate cancer" },
+                correctAnswer: "D",
+                rationale: "Prostate cancer can present with obstructive urinary symptoms identical to those of BPH, as the growing tumor can compress the urethra. This is why a digital rectal exam and PSA blood test are used to help differentiate between the two conditions.",
+                source: "The clinical presentation of prostate cancer is not explicitly detailed with a list of symptoms, but the screening slide for prostate cancer lists the 'PSA blood test +/- Rectal exam' for men starting at age 50, which is the standard workup for these symptoms. (Foundations in Medicine, Slide 29)"
+            },
+            {
+                learningObjective: "LO4 (Screening & Diagnosis): Explain how a diagnosis of cancer is confirmed: pathology, liquid biopsy and what does the future hold?",
+                question: "A patient has a suspicious nodule found on a chest CT scan. While imaging can strongly suggest malignancy, what is the definitive procedure required to confirm a diagnosis of cancer?",
+                options: { A: "A PET scan", B: "Measurement of tumor markers in the blood", C: "A tissue biopsy for histopathologic examination", D: "A liquid biopsy" },
+                correctAnswer: "C",
+                rationale: "The gold standard for cancer diagnosis is the histopathologic examination of a tissue sample (biopsy). A pathologist must examine the cells under a microscope to confirm the presence of malignant cells and determine the tumor type. All other tests are supportive but not typically diagnostic on their own.",
+                source: "The outline lists 'Histopathology' under the 'Diagnosis' section, and the slide titled 'Biopsy' shows procedures to obtain tissue. This implies its central role in diagnosis. (Foundations in Medicine, Slides 2 & 33)"
+            },
+            {
+                learningObjective: "LO4 (Screening & Diagnosis): Explain how a diagnosis of cancer is confirmed: pathology, liquid biopsy and what does the future hold?",
+                question: "A patient with advanced lung cancer is being monitored for treatment response. Instead of a repeat tissue biopsy, the oncologist orders a 'liquid biopsy'. What is the primary component analyzed in a liquid biopsy to detect tumor-specific mutations?",
+                options: { A: "Circulating tumor cells (CTCs)", B: "Circulating tumor DNA (ctDNA)", C: "Tumor-derived exosomes", D: "Cancer-associated antibodies" },
+                correctAnswer: "B",
+                rationale: "A liquid biopsy involves analyzing a blood sample for signs of cancer. The most commonly analyzed component is circulating tumor DNA (ctDNA), which are fragments of DNA shed from tumor cells into the bloodstream. Analyzing ctDNA can identify tumor-specific mutations for diagnosis, monitoring, and guiding targeted therapy.",
+                source: "The 'Liquid Biopsy' diagram shows 'cfDNA' (cell-free DNA, which includes ctDNA) as a key component analyzed from a blood sample. (Foundations in Medicine, Slide 37)"
+            },
+            {
+                learningObjective: "LO4 (Screening & Diagnosis): Explain how a diagnosis of cancer is confirmed: pathology, liquid biopsy and what does the future hold?",
+                question: "A pathologist is struggling to determine the origin of a poorly differentiated metastatic tumor based on histology alone. Which of the following technologies can analyze the tumor's genetic mutations to help identify the primary tissue of origin?",
+                options: { A: "Standard light microscopy", B: "Immunohistochemistry (IHC)", C: "Next-Generation Sequencing (NGS)", D: "Flow cytometry" },
+                correctAnswer: "C",
+                rationale: "Next-Generation Sequencing (NGS) analyzes a broad spectrum of genetic mutations within a tumor. The pattern of these mutations can create a 'signature' that is characteristic of a specific tissue type. This can be invaluable in identifying the origin of a cancer of unknown primary when histology and IHC are inconclusive.",
+                source: "'NGS can help decide tissue of origin when Histology and IHC are non conclusive.' (Foundations in Medicine, Slide 35)"
+            }
+        ];
+
+
+        const quizContainer = document.getElementById('quiz-container');
+        const themeToggleButton = document.getElementById('theme-toggle-button');
+        const bodyElement = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                bodyElement.classList.add('light-theme');
+                themeToggleButton.textContent = 'Switch to Dark Mode';
+            } else {
+                bodyElement.classList.remove('light-theme');
+                themeToggleButton.textContent = 'Switch to Light Mode';
+            }
+            localStorage.setItem('quizTheme', theme);
+        }
+
+        function loadQuiz() {
+            quizData.forEach((qData, index) => {
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.id = `q${index}`;
+
+                const loText = document.createElement('div');
+                loText.classList.add('learning-objective');
+                loText.textContent = qData.learningObjective;
+                questionBlock.appendChild(loText);
+
+                const questionText = document.createElement('p');
+                questionText.classList.add('question-text');
+                questionText.innerHTML = `${index + 1}. ${qData.question}`;
+                questionBlock.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                for (const optionKey in qData.options) {
+                    const optionId = `q${index}_${optionKey}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `q${index}`;
+                    radioInput.value = optionKey;
+                    radioInput.id = optionId;
+                    const labelText = document.createElement('span');
+                    labelText.textContent = ` ${optionKey}. ${qData.options[optionKey]}`;
+                    label.appendChild(radioInput);
+                    label.appendChild(labelText);
+                    optionsDiv.appendChild(label);
+                }
+                questionBlock.appendChild(optionsDiv);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('button-container');
+
+                const checkButton = document.createElement('button');
+                checkButton.textContent = 'Check Answer';
+                checkButton.classList.add('check-button');
+                checkButton.onclick = () => checkAnswer(index);
+                buttonContainer.appendChild(checkButton);
+                
+                questionBlock.appendChild(buttonContainer);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                questionBlock.appendChild(feedbackDiv);
+
+                quizContainer.appendChild(questionBlock);
+            });
+        }
+
+        function checkAnswer(questionIndex) {
+            const questionBlockElement = document.getElementById(`q${questionIndex}`);
+            const selectedRadioButton = questionBlockElement.querySelector('input[type="radio"]:checked');
+
+            if (!selectedRadioButton) {
+                alert("Please select an answer first.");
+                return;
+            }
+
+            const selectedOptionKey = selectedRadioButton.value;
+            const qData = quizData[questionIndex];
+            const feedbackDiv = questionBlockElement.querySelector('.feedback');
+            const correct = selectedOptionKey === qData.correctAnswer;
+
+            let feedbackHTML = '';
+
+            if (correct) {
+                feedbackHTML = `<span class="feedback-status">Correct!</span>`;
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                 feedbackHTML = `<span class="feedback-status">Incorrect. The correct answer is ${qData.correctAnswer}.</span>`;
+                feedbackDiv.className = 'feedback incorrect';
+            }
+
+            feedbackHTML += `<div class="feedback-rationale"><strong>Rationale:</strong> ${qData.rationale}</div>`;
+            feedbackHTML += `<div class="feedback-source">${qData.source}</div>`;
+            feedbackDiv.innerHTML = feedbackHTML;
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            if (bodyElement.classList.contains('light-theme')) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQuiz();
+        });
+
+    </script>
+
+</body>
+</html>```
